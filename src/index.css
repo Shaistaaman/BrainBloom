@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-primary: #58cc02; /* Duolingo Green */
+  --color-brand-secondary: #ffc800; /* Duolingo Yellow */
+  --color-brand-accent: #1cb0f6; /* Duolingo Blue */
+  --color-brand-danger: #ff4b4b; /* Duolingo Red */
+  --color-brand-purple: #ce82ff; /* Duolingo Purple */
+}
+
+@layer base {
+  body {
+    @apply bg-[#f7f7f7] text-[#4b4b4b] antialiased min-h-screen font-sans;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-primary text-white font-bold py-3 px-6 rounded-2xl 
+           border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1
+           transition-all duration-100 flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-brand-accent font-bold py-3 px-6 rounded-2xl 
+           border-2 border-[#e5e5e5] border-b-4 active:border-b-2 active:translate-y-0.5
+           transition-all duration-100 flex items-center justify-center gap-2;
+  }
+
+  .card-flat {
+    @apply bg-white border-2 border-[#e5e5e5] rounded-2xl p-6 transition-all hover:border-brand-accent;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 p-3 rounded-xl transition-colors font-bold text-[#777]
+           hover:bg-[#e5e5e5] hover:text-[#4b4b4b];
+  }
+  
+  .nav-item-active {
+    @apply bg-[#ddf4ff] text-[#1cb0f6] border-2 border-[#84d8ff];
+  }
+}
+
+/* Animations for active recall */
+.card-flip {
+  perspective: 1000px;
+}
+
+.card-flip-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card-flip-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  backface-visibility: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}

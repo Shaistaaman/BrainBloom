@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User gamification data and profile info",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "points": { "type": "integer" },
+        "level": { "type": "integer" },
+        "streak": { "type": "integer" },
+        "lastActive": { "type": "string", "format": "date-time" },
+        "badges": { "type": "array", "items": { "type": "string" } },
+        "unlockedDecks": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["uid", "displayName", "points", "level"]
+    },
+    "Deck": {
+      "title": "Learning Deck",
+      "description": "A collection of flashcards for a specific subject",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string" },
+        "color": { "type": "string" },
+        "category": { "type": "string" },
+        "difficulty": { "type": "integer" },
+        "minLevel": { "type": "integer" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["title", "icon", "color"]
+    },
+    "Card": {
+      "title": "Flashcard",
+      "description": "Individual card for active recall",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "deckId": { "type": "string" },
+        "front": { "type": "string" },
+        "back": { "type": "string" },
+        "hint": { "type": "string" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["front", "back", "deckId"]
+    },
+    "CardProgress": {
+      "title": "Card Progress",
+      "description": "Spaced repetition state for a specific user and card",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "cardId": { "type": "string" },
+        "deckId": { "type": "string" },
+        "interval": { "type": "integer" },
+        "repetitions": { "type": "integer" },
+        "easeFactor": { "type": "number" },
+        "nextReview": { "type": "string", "format": "date-time" },
+        "lastReviewed": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "cardId", "interval", "repetitions", "easeFactor"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles and gamification stats"
+    },
+    "decks/{deckId}": {
+      "schema": "Deck",
+      "description": "Public learning decks"
+    },
+    "decks/{deckId}/cards/{cardId}": {
+      "schema": "Card",
+      "description": "Cards within a specific deck"
+    },
+    "userProgress/{userId}/cards/{cardId}": {
+      "schema": "CardProgress",
+      "description": "Personalized SRS data for each user/card pair"
+    }
+  }
+}
