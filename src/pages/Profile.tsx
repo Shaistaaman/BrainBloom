@@ -1,8 +1,6 @@
 import React from 'react';
 import { useAuth } from '../App';
 import { db, signOut } from '../lib/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
-import { calculateLevel } from '../lib/srs';
 import { 
   LogOut, 
   Share2, 
@@ -81,24 +79,7 @@ export default function Profile() {
             <div className="text-2xl font-black">{stat.val}</div>
             <div className="text-[10px] font-bold text-[#afafaf] uppercase tracking-widest">{stat.label}</div>
             
-            {stat.label === 'Total XP' && (
-              <button 
-                onClick={async () => {
-                  if (!profile) return;
-                  const userRef = doc(db, 'users', profile.uid);
-                  const newXP = profile.points + 50;
-                  const newLevel = calculateLevel(newXP);
-                  await updateDoc(userRef, { 
-                    points: newXP,
-                    level: newLevel
-                  });
-                }}
-                className="mt-4 text-[10px] font-black uppercase tracking-widest text-brand-accent hover:bg-brand-accent/5 px-3 py-1.5 rounded-xl border border-brand-accent/20 transition-all"
-                title="Add 50 XP (Dev Booster)"
-              >
-                + XP Boost
-              </button>
-            )}
+
           </div>
         ))}
       </div>

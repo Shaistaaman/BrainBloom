@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { collection, getDocs, query, where, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { Deck } from '../types/firebase';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useAuth } from '../App';
 import { DEMO_DECKS } from '../constants';
 import { Trophy, Star, Lock, ChevronRight, CheckCircle2, Trash2, Edit2, Flame, PlusCircle } from 'lucide-react';
-import { calculateLevel, pointsToNextLevel } from '../lib/srs';
+import { pointsToNextLevel } from '../lib/srs';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { handleFirestoreError, OperationType } from '../lib/firebase';
 
@@ -109,18 +109,7 @@ export default function Learn() {
     9: "Say a Positive Word to Self"
   };
 
-  const handleXPBoost = async () => {
-    if (!profile) return;
-    const userRef = doc(db, 'users', profile.uid);
-    const newXP = profile.points + 50;
-    const newDailyXP = (profile.dailyXP || 0) + 50;
-    const newLevel = calculateLevel(newXP);
-    await updateDoc(userRef, { 
-      points: newXP,
-      dailyXP: newDailyXP,
-      level: newLevel
-    });
-  };
+
 
   // Fixed 10 levels as requested
   const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -161,12 +150,7 @@ export default function Learn() {
               <Star size={18} fill="currentColor" className="text-brand-secondary" />
               {xpNeededForNext} XP to reach Level {userLevel + 1}
             </span>
-            <button 
-              onClick={handleXPBoost}
-              className="text-[9px] font-black bg-brand-accent/10 text-brand-accent border border-brand-accent/20 px-3 py-1 rounded-xl hover:bg-brand-accent hover:text-white transition-all uppercase tracking-widest"
-            >
-              + Quick XP Boost
-            </button>
+
           </p>
           
           <div className="w-full bg-[#f0f0f0] h-6 rounded-2xl overflow-hidden shadow-inner border-2 border-white">
