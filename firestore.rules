@@ -49,7 +49,10 @@ service cloud.firestore {
           && (data.ownerId == null || data.ownerId == request.auth.uid);
       }
 
-      allow read: if isSignedIn() && (resource == null || resource.data.ownerId == null || resource.data.ownerId == request.auth.uid);
+      allow read: if isSignedIn() && (
+        resource.data.get('ownerId', null) == null || 
+        resource.data.ownerId == request.auth.uid
+      );
       allow create: if isSignedIn() && isValidDeck(request.resource.data) && request.resource.data.ownerId == request.auth.uid;
       allow update: if isSignedIn() && resource.data.ownerId == request.auth.uid && isValidDeck(request.resource.data);
       allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;

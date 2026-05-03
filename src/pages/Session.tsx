@@ -55,32 +55,34 @@ export default function Session() {
         const cardsPath = `decks/${deckId}/cards`;
         let cardsSnap = await getDocs(collection(db, cardsPath));
         
-        // 2. Seed data dynamically if deck is empty in Firestore
-        if (cardsSnap.empty) {
+        // 2. Sync Demo Data dynamically if it's a demo deck
+        const demoCards = DEMO_CARDS[deckId];
+        const isDemoDeck = DEMO_DECKS.some(d => d.id === deckId);
+        
+        if (isDemoDeck && demoCards && cardsSnap.size < demoCards.length) {
           const deckData = DEMO_DECKS.find(d => d.id === deckId);
-          const deckCards = DEMO_CARDS[deckId];
-          
-          if (deckData && deckCards) {
+          if (deckData) {
             // Seed Deck Info
             const deckRef = doc(db, 'decks', deckId);
             await setDoc(deckRef, deckData);
             
             // Seed Bundle of Cards
             const batch = writeBatch(db);
-            deckCards.forEach((c) => {
-              const newCardRef = doc(collection(db, cardsPath));
-              batch.set(newCardRef, { ...c, deckId });
+            demoCards.forEach((c, idx) => {
+              const cardId = `demo-${deckId}-${idx}`;
+              const newCardRef = doc(db, cardsPath, cardId);
+              batch.set(newCardRef, { ...c, id: cardId, deckId });
             });
             await batch.commit();
             
             // Re-fetch
             cardsSnap = await getDocs(collection(db, cardsPath));
-          } else {
-            // If it's a completely unknown deck, just navigate back
-            console.error('Unknown deck id:', deckId);
-            navigate('/learn');
-            return;
           }
+        } else if (cardsSnap.empty) {
+          // Fallback for non-demo decks or edge cases
+          setCards([]);
+          setLoading(false);
+          return;
         }
 
         setCards(cardsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Card)));
@@ -321,11 +323,11 @@ export default function Session() {
       <div className="flex-1 flex flex-col items-center justify-center py-4">
         {/* Flashcard */}
         <div 
-          className="w-full max-w-lg aspect-[4/5] md:aspect-[3/4] card-flip shrink-0"
+          className="w-full max-w-lg aspect-[4/5] md:aspect-[3/4] card-flip shrink-0 p-4"
         >
           <div className={`card-flip-inner w-full h-full relative ${isFlipped ? 'is-flipped' : ''}`}>
             {/* Front */}
-            <div className="card-front absolute w-full h-full bg-white border-2 border-[#e5e5e5] border-b-8 rounded-[2rem] flex flex-col items-center p-10 text-center shadow-sm overflow-hidden">
+            <div className="card-front absolute w-full h-full bg-white border-2 border-[#e5e5e5] border-b-8 rounded-[2rem] flex flex-col items-center p-10 text-center shadow-sm">
               <span className="text-xs font-black uppercase tracking-[0.2em] text-[#afafaf] mb-4">Question</span>
               
               {currentCard?.imageUrl && (

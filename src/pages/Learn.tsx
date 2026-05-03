@@ -20,19 +20,30 @@ export default function Learn() {
     if (!profile) return;
     async function fetchDecks() {
       try {
-        // Query public decks (no owner) and user's private decks
+        setLoading(true);
+        // Query public decks (no owner) and user's private decks separately
         const publicQuery = query(collection(db, 'decks'), where('ownerId', '==', null));
         const privateQuery = query(collection(db, 'decks'), where('ownerId', '==', profile.uid));
         
-        const [publicSnap, privateSnap] = await Promise.all([
-          getDocs(publicQuery),
-          getDocs(privateQuery)
-        ]);
+        let publicDocs: any[] = [];
+        let privateDocs: any[] = [];
 
-        const firestoreDecks = [
-          ...publicSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Deck)),
-          ...privateSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Deck))
-        ];
+        try {
+          const publicSnap = await getDocs(publicQuery);
+          publicDocs = publicSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Deck));
+        } catch (e) {
+          console.error("Public decks fetch failed:", e);
+        }
+
+        try {
+          const privateSnap = await getDocs(privateQuery);
+          privateDocs = privateSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Deck));
+        } catch (e) {
+          console.error("Private decks fetch failed:", e);
+          handleFirestoreError(e, OperationType.LIST, 'decks/private');
+        }
+
+        const firestoreDecks = [...publicDocs, ...privateDocs];
         
         const deckMap = new Map<string, Deck>();
         // Add demo decks from constants

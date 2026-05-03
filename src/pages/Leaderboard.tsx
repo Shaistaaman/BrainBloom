@@ -4,6 +4,7 @@ import {
   query, 
   orderBy, 
   limit, 
+  where,
   onSnapshot 
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -20,6 +21,7 @@ export default function Leaderboard() {
   useEffect(() => {
     const q = query(
       collection(db, 'users'),
+      where('points', '>=', 0),
       orderBy('points', 'desc'),
       limit(50)
     );

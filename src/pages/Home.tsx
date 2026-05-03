@@ -164,7 +164,7 @@ export default function Home() {
             {profile?.badges?.length || 0} / 4 Earned
           </span>
         </div>
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide px-2 pt-2 mx-2">
           {['Explorer', 'Scholar', 'Memory Master', 'Visionary'].map((badge) => {
             const isEarned = profile?.badges?.includes(badge);
             return (

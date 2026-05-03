@@ -370,7 +370,7 @@ export default function CreateCourse() {
                             type="url"
                             value={card.imageUrl}
                             onChange={(e) => updateCard(index, 'imageUrl', e.target.value)}
-                            placeholder="https://images.unsplash.com/photo-..."
+                            placeholder="https://images.pexels.com/photos/..."
                             className="flex-1 bg-[#f7f7f7] border-2 border-transparent rounded-xl px-4 py-2 font-bold focus:border-brand-accent outline-none transition-all text-xs"
                           />
                           <label className="cursor-pointer bg-brand-primary/10 hover:bg-brand-primary/20 text-brand-primary p-2 rounded-xl transition-all flex items-center justify-center">
